@@ -2,30 +2,107 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Israeli_virus.exe</title>
+  <title>ISRAELI_VIRUS.exe</title>
   <style>
     body {
       margin: 0;
+      overflow: hidden;
       background: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      font-family: Arial, sans-serif;
     }
+
     iframe {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
       border: none;
+      z-index: 1;
+      transition: filter 0.3s ease;
+    }
+
+    /* Blur effect */
+    .blurred {
+      filter: blur(8px);
+    }
+
+    /* Popup overlay */
+    #popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: black;
+      color: red;
+      padding: 30px;
+      border: 3px solid red;
+      text-align: center;
+      z-index: 2;
+      display: none;
+      box-shadow: 0 0 20px red;
+    }
+
+    /* Flashing text */
+    .flash {
+      font-size: 24px;
+      font-weight: bold;
+      animation: flash 0.8s infinite;
+    }
+
+    @keyframes flash {
+      0% { color: red; }
+      50% { color: yellow; }
+      100% { color: red; }
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background: red;
+      color: white;
+      border: none;
+    }
+
+    button:hover {
+      background: darkred;
     }
   </style>
 </head>
 <body>
 
   <iframe 
+    id="video"
     src="https://www.youtube.com/embed/hehD3ealCpA?autoplay=1&mute=1&controls=0&loop=1&playlist=hehD3ealCpA"
     allow="autoplay; fullscreen"
     allowfullscreen>
   </iframe>
+
+  <!-- Popup -->
+  <div id="popup">
+    <div class="flash">WARNING!!! CLICK OK TO CONTINUE</div>
+    <button onclick="closePopup()">OK</button>
+  </div>
+
+  <script>
+    const popup = document.getElementById("popup");
+    const video = document.getElementById("video");
+
+    function showPopup() {
+      popup.style.display = "block";
+      video.classList.add("blurred");
+    }
+
+    function closePopup() {
+      popup.style.display = "none";
+      video.classList.remove("blurred");
+    }
+
+    // Show popup after 2 seconds
+    setTimeout(showPopup, 2000);
+  </script>
 
 </body>
 </html>
