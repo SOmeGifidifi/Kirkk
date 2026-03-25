@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Autoplay Video</title>
+  <title>Israeli_virus.exe</title>
   <style>
     body {
       margin: 0;
@@ -75,14 +75,12 @@
     src="https://www.youtube.com/embed/hehD3ealCpA?autoplay=1&mute=1&controls=0&loop=1&playlist=hehD3ealCpA"
     allow="autoplay; fullscreen">
   </iframe>
-
-  <!-- Popup -->
+  
   <div id="popup">
-    <div class="flash">⚠ WARNING ⚠<br>CLICK OK TO CONTINUE</div>
-    <button onclick="closePopup()">OK</button>
+    <div class="flash">⚠ UWAGA ⚠<br>TWOJE URZĄDZENIE ZOSTAŁO WYBRANE DO RUTYNOWEJ KONTROLI MOSADU!!!</div>
+    <button onclick="closePopup()">ODSŁUCHAJ PIEŚŃ ABY KONTYNUOWAĆ</button>
   </div>
-
-  <!-- Alarm sound -->
+  
   <audio id="alarm" loop>
     <source src="https://www.soundjay.com/misc/sounds/alarm-clock-01.mp3" type="audio/mpeg">
   </audio>
@@ -96,7 +94,6 @@
       popup.style.display = "block";
       video.classList.add("blurred");
 
-      // Try to play sound (may require user interaction in some browsers)
       alarm.play().catch(() => {
         console.log("Autoplay blocked until user interacts.");
       });
@@ -109,7 +106,6 @@
       alarm.currentTime = 0;
     }
 
-    // More reliable trigger
     window.onload = () => {
       setTimeout(showPopup, 1500);
     };
