@@ -2,30 +2,118 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Israeli_virus.exe</title>
+  <title>Autoplay Video</title>
   <style>
     body {
       margin: 0;
+      overflow: hidden;
       background: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      font-family: Arial, sans-serif;
     }
+
     iframe {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
       border: none;
+      z-index: 1;
+      transition: filter 0.3s ease;
+    }
+
+    .blurred {
+      filter: blur(8px);
+    }
+
+    #popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: black;
+      color: red;
+      padding: 30px;
+      border: 3px solid red;
+      text-align: center;
+      z-index: 9999;
+      display: none;
+      box-shadow: 0 0 20px red;
+    }
+
+    .flash {
+      font-size: 24px;
+      font-weight: bold;
+      animation: flash 0.8s infinite;
+    }
+
+    @keyframes flash {
+      0% { color: red; }
+      50% { color: yellow; }
+      100% { color: red; }
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background: red;
+      color: white;
+      border: none;
+    }
+
+    button:hover {
+      background: darkred;
     }
   </style>
 </head>
 <body>
 
   <iframe 
-    src="https://www.youtube.com/embed/hehD3ealCpA?autoplay=1&mute=0&controls=0&loop=1&playlist=hehD3ealCpA"
-    allow="autoplay; fullscreen"
-    allowfullscreen>
+    id="video"
+    src="https://www.youtube.com/embed/hehD3ealCpA?autoplay=1&mute=1&controls=0&loop=1&playlist=hehD3ealCpA"
+    allow="autoplay; fullscreen">
   </iframe>
+
+  <!-- Popup -->
+  <div id="popup">
+    <div class="flash">⚠ WARNING ⚠<br>CLICK OK TO CONTINUE</div>
+    <button onclick="closePopup()">OK</button>
+  </div>
+
+  <!-- Alarm sound -->
+  <audio id="alarm" loop>
+    <source src="https://www.soundjay.com/misc/sounds/alarm-clock-01.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const popup = document.getElementById("popup");
+    const video = document.getElementById("video");
+    const alarm = document.getElementById("alarm");
+
+    function showPopup() {
+      popup.style.display = "block";
+      video.classList.add("blurred");
+
+      // Try to play sound (may require user interaction in some browsers)
+      alarm.play().catch(() => {
+        console.log("Autoplay blocked until user interacts.");
+      });
+    }
+
+    function closePopup() {
+      popup.style.display = "none";
+      video.classList.remove("blurred");
+      alarm.pause();
+      alarm.currentTime = 0;
+    }
+
+    // More reliable trigger
+    window.onload = () => {
+      setTimeout(showPopup, 1500);
+    };
+  </script>
 
 </body>
 </html>
