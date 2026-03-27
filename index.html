@@ -68,18 +68,38 @@
       background: darkred;
     }
 
-    /* Map box */
-    #map {
+    /* MAP WINDOW */
+    #mapWindow {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 300px;
-      height: 200px;
-      z-index: 9999;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      height: 300px;
       display: none;
-      border: 2px solid red;
+      z-index: 10000;
+      padding: 5px;
+      border-radius: 10px;
+
+      /* flashing gradient border */
+      background: linear-gradient(45deg, red, darkred, red);
+      background-size: 400% 400%;
+      animation: borderFlash 1s infinite;
+      box-shadow: 0 0 25px red;
+    }
+
+    @keyframes borderFlash {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    #mapInner {
+      width: 100%;
+      height: 100%;
       background: black;
     }
+
   </style>
 </head>
 <body>
@@ -87,7 +107,7 @@
   <!-- VIDEO -->
   <iframe 
     id="video"
-    src="https://www.youtube.com/embed/lqm9wUr8LEk?autoplay=1&mute=0&loop=1&playlist=lqm9wUr8LEk&controls=0&rel=0"
+    src="https://www.youtube.com/embed/lqm9wUr8LEk?autoplay=1&mute=1&loop=1&playlist=lqm9wUr8LEk&controls=0&rel=0"
     allow="autoplay; fullscreen">
   </iframe>
   
@@ -95,13 +115,15 @@
   <div id="popup">
     <div class="flash">
       ⚠ UWAGA ⚠<br>
-      TWOJE URZĄDZENIE ZOSTAŁO WYBRANE DO RUTYNOWEJ KONTROLI MOSADU!!!!
+      TWOJE URZĄDZENIE ZOSTAŁO WYBRANE DO KONTROLI
     </div>
     <button onclick="closePopup()">KONTYNUUJ</button>
   </div>
 
-  <!-- MAP -->
-  <div id="map"></div>
+  <!-- MAP WINDOW -->
+  <div id="mapWindow">
+    <div id="mapInner"></div>
+  </div>
 
   <!-- SOUND -->
   <audio id="alarm" loop>
@@ -112,13 +134,12 @@
     const popup = document.getElementById("popup");
     const video = document.getElementById("video");
     const alarm = document.getElementById("alarm");
-    const mapDiv = document.getElementById("map");
+    const mapWindow = document.getElementById("mapWindow");
+    const mapInner = document.getElementById("mapInner");
 
     function showPopup() {
       popup.style.display = "block";
       video.classList.add("blurred");
-
-      // try sound (may wait for click)
       alarm.play().catch(() => {});
     }
 
@@ -134,15 +155,15 @@
 
     function getLocation() {
       if (!navigator.geolocation) {
-        showError("Geolocation not supported");
+        showError("Brak geolokalizacji");
         return;
       }
 
-      mapDiv.style.display = "block";
-      mapDiv.innerHTML = "<div style='color:red;padding:10px;'>Locating...</div>";
+      mapWindow.style.display = "block";
+      mapInner.innerHTML = "<div style='color:red;padding:10px;'>NAMIERZANIE...</div>";
 
       navigator.geolocation.getCurrentPosition(showMap, () => {
-        showError("Access denied");
+        showError("ODRZUCONO DOSTĘP");
       });
     }
 
@@ -150,7 +171,7 @@
       const lat = position.coords.latitude;
       const lon = position.coords.longitude;
 
-      mapDiv.innerHTML = `
+      mapInner.innerHTML = `
         <iframe
           width="100%"
           height="100%"
@@ -161,10 +182,9 @@
     }
 
     function showError(msg) {
-      mapDiv.innerHTML = `<div style="color:red;padding:10px;">${msg}</div>`;
+      mapInner.innerHTML = `<div style="color:red;padding:10px;">${msg}</div>`;
     }
 
-    // reliable popup trigger
     window.addEventListener("load", () => {
       setTimeout(showPopup, 100);
     });
