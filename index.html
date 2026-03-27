@@ -68,7 +68,7 @@
       background: darkred;
     }
 
-    /* MAP WINDOW */
+    /* 🔥 MAP WINDOW */
     #mapWindow {
       position: fixed;
       top: 50%;
@@ -78,14 +78,15 @@
       height: 300px;
       display: none;
       z-index: 10000;
-      padding: 5px;
+      padding: 6px;
       border-radius: 10px;
 
-      /* flashing gradient border */
       background: linear-gradient(45deg, red, darkred, red);
       background-size: 400% 400%;
       animation: borderFlash 1s infinite;
       box-shadow: 0 0 25px red;
+
+      overflow: hidden;
     }
 
     @keyframes borderFlash {
@@ -98,20 +99,27 @@
       width: 100%;
       height: 100%;
       background: black;
+      overflow: hidden;
     }
 
+    #mapInner iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
   </style>
 </head>
 <body>
 
-  <!-- VIDEO -->
+  <!-- 🎬 VIDEO -->
   <iframe 
     id="video"
     src="https://www.youtube.com/embed/lqm9wUr8LEk?autoplay=1&mute=1&loop=1&playlist=lqm9wUr8LEk&controls=0&rel=0"
     allow="autoplay; fullscreen">
   </iframe>
   
-  <!-- POPUP -->
+  <!-- ⚠️ POPUP -->
   <div id="popup">
     <div class="flash">
       ⚠ UWAGA ⚠<br>
@@ -120,12 +128,12 @@
     <button onclick="closePopup()">KONTYNUUJ</button>
   </div>
 
-  <!-- MAP WINDOW -->
+  <!-- 🗺️ MAP -->
   <div id="mapWindow">
     <div id="mapInner"></div>
   </div>
 
-  <!-- SOUND -->
+  <!-- 🔊 SOUND -->
   <audio id="alarm" loop>
     <source src="https://www.soundjay.com/misc/sounds/alarm-clock-01.mp3">
   </audio>
@@ -172,12 +180,7 @@
       const lon = position.coords.longitude;
 
       mapInner.innerHTML = `
-        <iframe
-          width="100%"
-          height="100%"
-          style="border:0"
-          src="https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed">
-        </iframe>
+        <iframe src="https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed"></iframe>
       `;
     }
 
@@ -185,6 +188,14 @@
       mapInner.innerHTML = `<div style="color:red;padding:10px;">${msg}</div>`;
     }
 
+    /* 🔥 Hide map on any click (feels like returning to video) */
+    document.addEventListener("click", () => {
+      if (mapWindow.style.display === "block") {
+        mapWindow.style.display = "none";
+      }
+    });
+
+    /* 🚀 Reliable popup trigger */
     window.addEventListener("load", () => {
       setTimeout(showPopup, 100);
     });
