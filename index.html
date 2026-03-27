@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Israeli_virus.exe</title>
+
   <style>
     body {
       margin: 0;
@@ -66,49 +67,107 @@
     button:hover {
       background: darkred;
     }
+
+    /* Map box */
+    #map {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 300px;
+      height: 200px;
+      z-index: 9999;
+      display: none;
+      border: 2px solid red;
+      background: black;
+    }
   </style>
 </head>
 <body>
 
+  <!-- VIDEO -->
   <iframe 
     id="video"
-    src="https://www.youtube.com/embed/lqm9wUr8LEk?autoplay=1&mute=0&loop=1&playlist=lqm9wUr8LEk&controls=0&rel=0"
+    src="https://www.youtube.com/embed/lqm9wUr8LEk?autoplay=1&mute=1&loop=1&playlist=lqm9wUr8LEk&controls=0&rel=0"
     allow="autoplay; fullscreen">
   </iframe>
   
+  <!-- POPUP -->
   <div id="popup">
-    <div class="flash">⚠ UWAGA ⚠<br>TWOJE URZĄDZENIE ZOSTAŁO WYBRANE DO RUTYNOWEJ KONTROLI MOSADU!!!</div>
-    <button onclick="closePopup()">ODSŁUCHAJ PIEŚŃ ABY KONTYNUOWAĆ</button>
+    <div class="flash">
+      ⚠ UWAGA ⚠<br>
+      TWOJE URZĄDZENIE ZOSTAŁO WYBRANE DO RUTYNOWEJ KONTROLI MOSADU!!!
+    </div>
+    <button onclick="closePopup()">KONTYNUUJ</button>
   </div>
-  
+
+  <!-- MAP -->
+  <div id="map"></div>
+
+  <!-- SOUND -->
   <audio id="alarm" loop>
-    <source src="https://www.soundjay.com/misc/sounds/alarm-clock-01.mp3" type="audio/mpeg">
+    <source src="https://www.soundjay.com/misc/sounds/alarm-clock-01.mp3">
   </audio>
 
   <script>
     const popup = document.getElementById("popup");
     const video = document.getElementById("video");
     const alarm = document.getElementById("alarm");
+    const mapDiv = document.getElementById("map");
 
     function showPopup() {
       popup.style.display = "block";
       video.classList.add("blurred");
 
-      alarm.play().catch(() => {
-        console.log("Autoplay blocked until user interacts.");
-      });
+      // try sound (may wait for click)
+      alarm.play().catch(() => {});
     }
 
     function closePopup() {
       popup.style.display = "none";
       video.classList.remove("blurred");
+
       alarm.pause();
       alarm.currentTime = 0;
+
+      getLocation();
     }
 
-    window.onload = () => {
-      setTimeout(showPopup, 1);
-    };
+    function getLocation() {
+      if (!navigator.geolocation) {
+        showError("Geolocation not supported");
+        return;
+      }
+
+      mapDiv.style.display = "block";
+      mapDiv.innerHTML = "<div style='color:red;padding:10px;'>Locating...</div>";
+
+      navigator.geolocation.getCurrentPosition(showMap, () => {
+        showError("Access denied");
+      });
+    }
+
+    function showMap(position) {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      mapDiv.innerHTML = `
+        <iframe
+          width="100%"
+          height="100%"
+          style="border:0"
+          src="https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed">
+        </iframe>
+      `;
+    }
+
+    function showError(msg) {
+      mapDiv.innerHTML = `<div style="color:red;padding:10px;">${msg}</div>`;
+    }
+
+    // reliable popup trigger
+    window.addEventListener("load", () => {
+      setTimeout(showPopup, 100);
+    });
   </script>
 
 </body>
